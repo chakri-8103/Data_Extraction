@@ -1,0 +1,102 @@
+<div class="app-container">
+
+  <div class="header-container">
+    <h1 class="text-center fw-bold">📊 Data Extraction</h1>
+    <p class="text-center text-muted">Upload & extract data seamlessly with ease.</p>
+  </div>
+
+
+  <div *ngIf="!uploadComplete" class="content-card container mt-4 p-4 rounded shadow-lg bg-white">
+    <div class="card-header text-center">
+      <h2 class="mb-0">📄 Upload Your Documents</h2>
+    </div>
+    <div class="text-center mt-3">
+      <h4 class="fw-bold">Securely upload your essential documents</h4>
+      <p class="text-muted">Aadhaar Card, Marks Memos, Transfer Certificate (TC)</p>
+    </div>
+
+    <div class="file-input-container mt-3">
+      <label class="file-input-label">
+        <div class="text-center">
+          <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+          <p class="mb-0 mt-2 fw-semibold text-secondary">
+            Drag & drop your PDF here or <span class="text-primary fw-bold">click to browse</span>
+          </p>
+        </div>
+        <input 
+          type="file" 
+          class="file-input" 
+          (change)="onFileSelected($event)" 
+          accept="application/pdf"
+        >
+      </label>
+    </div>
+
+
+    <div class="text-center mt-3" *ngIf="errorMessage">
+      <div class="alert alert-danger d-inline-block">
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <div class="text-center mt-3" *ngIf="fileName">
+      <span class="file-name-badge badge bg-primary text-white px-3 py-2 rounded-pill">{{ fileName }}</span><br>
+      <button class="btn btn-primary mt-3 px-4 fw-bold shadow-sm" 
+              (click)="uploadFile()" 
+              [disabled]="isLoading">
+        <i class="bi bi-rocket me-2"></i> Upload
+      </button>
+    </div>
+
+
+    <div class="spinner-container text-center mt-3" *ngIf="isLoading">
+      <div class="spinner-border text-primary spinner-xl" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="processing-text text-muted fw-semibold mt-2">Processing file, please wait...</p>
+    </div>
+  </div>
+
+
+  <div *ngIf="uploadComplete && !isLoading && tableData.length > 0" class="content-card container mt-5 p-4 rounded shadow-lg bg-white">
+    <h3 class="text-center mb-4 fw-bold">📋 Extracted Data</h3>
+
+    <div class="table-responsive">
+      <table class="table table-striped shadow-sm">
+        <thead class="bg-primary text-white">
+          <tr>
+            <th class="p-3">📌 Field</th>
+            <th class="p-3">📜 Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of tableData" class="border-bottom">
+            <td class="fw-bold p-3">{{ item.key }}</td>
+            <td class="p-3">{{ item.value || ' ' }}</td> 
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="text-center mt-4">
+      <button class="btn btn-secondary me-3 fw-bold shadow-sm" (click)="reUpload()">
+        <i class="bi bi-arrow-clockwise me-2"></i> Re-upload
+      </button>
+      <button class="btn btn-success fw-bold shadow-sm" (click)="downloadPDF()">
+        <i class="bi bi-download me-2"></i> Download PDF
+      </button>
+    </div>
+  </div>
+
+
+  <div *ngIf="!isLoading && uploadComplete && (!tableData || tableData.length === 0) && !errorMessage" class="content-card container mt-4 p-4 rounded shadow-lg bg-white text-center">
+    <div class="alert alert-info p-4">
+      <i class="bi bi-info-circle-fill me-2 text-primary"></i>
+      <span class="fw-semibold">No data could be extracted from this file. Please try another document.</span>
+    </div>
+    <button class="btn btn-secondary mt-3 fw-bold shadow-sm" (click)="reUpload()">
+      <i class="bi bi-arrow-clockwise me-2"></i> Try Another File
+    </button>
+  </div>
+</div>
